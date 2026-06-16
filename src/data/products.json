@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "title": "Teclado",
+    "description": "Teclado mecanico",
+    "code": "TEC001",
+    "price": 60000,
+    "status": true,
+    "stock": 20,
+    "category": "Perifericos",
+    "thumbnails": []
+  }
+]
