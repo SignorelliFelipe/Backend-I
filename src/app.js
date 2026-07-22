@@ -5,6 +5,8 @@ import { engine } from "express-handlebars";
 import { Server } from "socket.io";
 
 import ProductManager from "./managers/ProductManager.js";
+import { connectDB } from "./config/database.js";
+
 
 import viewsRouter from "./routes/views.router.js";
 import productsRouter from "./routes/products.router.js";
@@ -15,7 +17,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-const productManager = new ProductManager("./src/data/products.json");
+const productManager = new ProductManager();
 
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
@@ -27,6 +29,10 @@ app.use(express.json());
 app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+
+
+await connectDB();
+
 
 const server = app.listen(8080, () => {
     console.log("Servidor escuchando en puerto 8080");

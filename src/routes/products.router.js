@@ -3,17 +3,45 @@ import ProductManager from "../managers/ProductManager.js";
 
 const router = Router();
 
-const productManager = new ProductManager(
-    "./src/data/products.json"
-);
+const productManager = new ProductManager();
 
 router.get("/", async (req, res) => {
-    const products = await productManager.getProducts();
 
-    res.json(products);
+    const {
+        limit = 10,
+        page = 1,
+        sort,
+        query
+    } = req.query;
+
+    const result = await productManager.getProducts({
+        limit,
+        page,
+        sort,
+        query
+    });
+
+    res.json({
+        status: "success",
+        payload: result.docs,
+        totalPages: result.totalPages,
+        prevPage: result.prevPage,
+        nextPage: result.nextPage,
+        page: result.page,
+        hasPrevPage: result.hasPrevPage,
+        hasNextPage: result.hasNextPage,
+        prevLink: result.hasPrevPage
+            ? `/api/products?page=${result.prevPage}`
+            : null,
+        nextLink: result.hasNextPage
+            ? `/api/products?page=${result.nextPage}`
+            : null
+    });
+
 });
+
 router.get("/:pid", async (req, res) => {
-    const pid = Number(req.params.pid);
+    const pid = req.params.pid;
 
     const product = await productManager.getProductById(pid);
 
@@ -35,7 +63,7 @@ router.post("/", async (req, res) => {
 });
 
 router.delete("/:pid", async (req, res) => {
-    const pid = Number(req.params.pid);
+    const pid = req.params.pid;
 
     await productManager.deleteProduct(pid);
 
@@ -45,7 +73,7 @@ router.delete("/:pid", async (req, res) => {
 });
 
 router.put("/:pid", async (req, res) => {
-    const pid = Number(req.params.pid);
+    const pid = req.params.pid;
 
     const updatedProduct =
         await productManager.updateProduct(

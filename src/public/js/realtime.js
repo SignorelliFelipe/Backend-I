@@ -37,7 +37,7 @@ socket.on("updateProducts", (products) => {
             Stock: ${product.stock}<br>
             Categoría: ${product.category}<br><br>
 
-            <button onclick="deleteProduct(${product.id})">
+            <button onclick="deleteProduct('${product._id}')">
                 Eliminar
             </button>
         </li>

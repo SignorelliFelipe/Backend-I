@@ -3,9 +3,7 @@ import CartManager from "../managers/CartManager.js";
 
 const router = Router();
 
-const cartManager = new CartManager(
-    "./src/data/carts.json"
-);
+const cartManager = new CartManager();
 
 router.post("/", async (req, res) => {
     const cart = await cartManager.createCart();
@@ -14,7 +12,7 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/:cid", async (req, res) => {
-    const cid = Number(req.params.cid);
+    const cid = req.params.cid;
 
     const cart = await cartManager.getCartById(cid);
 
@@ -22,8 +20,8 @@ router.get("/:cid", async (req, res) => {
 });
 
 router.post("/:cid/product/:pid", async (req, res) => {
-    const cid = Number(req.params.cid);
-    const pid = Number(req.params.pid);
+    const cid = req.params.cid;
+    const pid = req.params.pid;
 
     const cart = await cartManager.addProductToCart(
         cid,
@@ -31,6 +29,61 @@ router.post("/:cid/product/:pid", async (req, res) => {
     );
 
     res.json(cart);
+});
+
+router.delete("/:cid/products/:pid", async (req, res) => {
+
+    const { cid, pid } = req.params;
+
+    const cart = await cartManager.removeProductFromCart(
+        cid,
+        pid
+    );
+
+    res.json(cart);
+
+});
+
+router.put("/:cid/products/:pid", async (req, res) => {
+
+    const { cid, pid } = req.params;
+
+    const { quantity } = req.body;
+
+    const cart =
+        await cartManager.updateProductQuantity(
+            cid,
+            pid,
+            quantity
+        );
+
+    res.json(cart);
+
+});
+
+router.delete("/:cid", async (req, res) => {
+
+    const { cid } = req.params;
+
+    const cart = await cartManager.clearCart(cid);
+
+    res.json(cart);
+
+});
+
+router.put("/:cid", async (req, res) => {
+
+    const { cid } = req.params;
+
+    const products = req.body;
+
+    const cart = await cartManager.replaceCart(
+        cid,
+        products
+    );
+
+    res.json(cart);
+
 });
 
 export default router;
